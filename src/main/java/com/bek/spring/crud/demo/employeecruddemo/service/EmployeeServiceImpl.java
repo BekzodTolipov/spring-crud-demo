@@ -1,6 +1,7 @@
 package com.bek.spring.crud.demo.employeecruddemo.service;
 
 import com.bek.spring.crud.demo.employeecruddemo.dao.EmployeeDAO;
+import com.bek.spring.crud.demo.employeecruddemo.dao.EmployeeRepository;
 import com.bek.spring.crud.demo.employeecruddemo.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,38 +9,62 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private EmployeeDAO employeeDAO;
+//    private EmployeeDAO employeeDAO;
+//
+//    @Autowired
+//    public EmployeeServiceImpl(@Qualifier("employeeDAOHibernateImpl") EmployeeDAO theEmployeeDAO){
+//        employeeDAO = theEmployeeDAO;
+//    }
+//    private EmployeeDAO employeeDAO;
+//
+//    @Autowired
+//    public EmployeeServiceImpl(@Qualifier("employeeDAOJpaImpl") EmployeeDAO theEmployeeDAO){
+//        employeeDAO = theEmployeeDAO;
+//    }
+
+    private EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeServiceImpl(@Qualifier("employeeDAOJpaImpl") EmployeeDAO theEmployeeDAO){
-        employeeDAO = theEmployeeDAO;
+    public EmployeeServiceImpl(EmployeeRepository theEmployeeRepository){
+        employeeRepository = theEmployeeRepository;
     }
 
     @Override
-    @Transactional
+//    @Transactional  // Spring JPA auto provides it, no need for it
     public List<Employee> findAll() {
-        return employeeDAO.findAll();
+        return employeeRepository.findAll();
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public Employee findById(int theId) {
-        return employeeDAO.findById(theId);
+        Optional<Employee> result = employeeRepository.findById(theId);
+
+        Employee theEmployee = null;
+        if(result.isPresent()){
+            theEmployee = result.get();
+        }
+        else{
+            // we did not find the employee
+            throw new RuntimeException("Did not find employee id - " + theId);
+        }
+        return theEmployee;
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void saveEmpl(Employee theEmployee) {
-        employeeDAO.saveEmployee(theEmployee);
+        employeeRepository.save(theEmployee);
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public void deleteEmplById(int theId) {
-        employeeDAO.deleteEmployeeById(theId);
+        employeeRepository.deleteById(theId);
     }
 }

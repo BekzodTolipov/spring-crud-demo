@@ -54,7 +54,7 @@ public class EmployeeRestController {
         return theEmployee;
     }
 
-    // expose "/employee and update the employee
+    // expose "/employee" and update the employee
     @PutMapping("/employee")
     public Employee updateAnEmployee(@RequestBody Employee theEmployee){
         employeeService.saveEmpl(theEmployee);
